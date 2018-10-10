@@ -1,5 +1,5 @@
 import setAuthorizationToken from './setAuthorizationToken';
-import { setMemberAuthenticated } from './../actions/back/authenticate';
+import { setUserAuthenticated } from './../actions/authenticate';
 import jwt_decode from 'jwt-decode';
 import { store } from './../index';
 
@@ -8,7 +8,7 @@ const isAuthenticated = () => {
         const token = localStorage.accessToken;
         const decoded = jwt_decode(token);
         setAuthorizationToken(token);
-        store.dispatch(setMemberAuthenticated(decoded));
+        store.dispatch(setUserAuthenticated(decoded));
     }
 }
 

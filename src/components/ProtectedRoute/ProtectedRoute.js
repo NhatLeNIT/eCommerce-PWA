@@ -10,7 +10,7 @@ const ProtectedRoute = (props) => {
             isAuthenticated === true
                 ? <Component {...props} />
                 : <Redirect to={{
-                    pathname: '/admin/login',
+                    pathname: '/login',
                     state: { from: props.location }
                 }} />
         )} />
@@ -19,7 +19,7 @@ const ProtectedRoute = (props) => {
 
 const mapStateToProps = state => {
     return {
-        isAuthenticated: state.authMember.isAuthenticated
+        isAuthenticated: state.auth.isAuthenticated
     }
 }
 export default connect(mapStateToProps)(ProtectedRoute);

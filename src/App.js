@@ -4,9 +4,11 @@ import ReduxToastr from 'react-redux-toastr';
 // import BackRoutes from './routes/backRoutes';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Route } from 'react-router-dom';
-import Dashboard from './containers/Back/Dashboard';
-import Login from './containers/Back/Login';
-import Page404 from './containers/Back/ErrorPages/404';
+import Login from './containers/Login';
+import Page404 from './containers/ErrorPages/404';
+import Layout from './hoc/Layout';
+import Dashboard from './containers/Dashboard';
+import Users from './containers/Users';
 class App extends Component {
     render() {
         return (
@@ -21,12 +23,21 @@ class App extends Component {
                     progressBar
                     closeOnToastrClick />
 
+
+
                 <Switch>
-                    <ProtectedRoute path="/admin" exact component={Dashboard} />
-                    <Route path="/admin/login" exact component={Login} />
-                    <ProtectedRoute path="/admin/dashboard" exact component={Dashboard} />
-                    <Route component={Page404} />
+                    <Route path="/login" exact component={Login} />
+                    <Layout>
+                        <Switch>
+                            <ProtectedRoute path="/" exact component={Dashboard} />
+                            <ProtectedRoute path="/dashboard" exact component={Dashboard} />
+                            <ProtectedRoute path="/users" component={Users} />
+                            <Route component={Page404} />
+                        </Switch>
+                    </Layout>
                 </Switch>
+
+
             </Fragment>
         );
     }

@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
-import LoginForm from './../../../components/UI/LoginFormBack';
-import Button from './../../../components/UI/Button';
-import { loginMemberRequest, changeLoadingStatus } from './../../../actions';
-
+import LoginForm from './../../components/UI/LoginForm';
+import Button from './../../components/UI/Button';
+import { loginRequest, changeLoadingStatus } from './../../actions';
+import SyncLoader from 'react-spinners/SyncLoader';
+import './Login.css';
 
 class LoginContainer extends Component {
     state = {
@@ -80,7 +81,7 @@ class LoginContainer extends Component {
         };
 
         updatedFormElement.value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-        // console.log(event.target.type === 'checkbox');
+
         let checked = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
 
         updatedFormElement.valid = checked.isValid;
@@ -97,28 +98,24 @@ class LoginContainer extends Component {
 
     loginHandler = (event) => {
         event.preventDefault();
-        // console.log(1);
-        // this.setState({ loading: false });
         this.props.onChangeLoadingStatus(true);
         const formData = {};
         for (let formElementIdentifier in this.state.loginForm) {
             formData[formElementIdentifier] = this.state.loginForm[formElementIdentifier].value;
         }
-        this.props.onLoginMember(formData);
+        this.props.onLogin(formData);
     }
    
     redirectToTarget = (to) => {
+        to.hash="login"
         // this.props.history.push(to)
-        return <Redirect to={to} />
+        return <Redirect to={to}  />
+       
     }
 
     render() {
-        // console.log('Redirected /admin/login => Component Login is called');
-        console.log('isAuthenticated ' + this.props.isAuthenticated);
-        // console.log(this.props.loadingStatus);
-        // console.log(this.props.history.push('/admin'));
         const { isAuthenticated } = this.props;
-        const { from } = this.props.location.state || { from: { pathname: '/admin' } }
+        const { from } = this.props.location.state || { from: { pathname: '/' } }
       
         const formElementsArray = [];
         for (let key in this.state.loginForm) {
@@ -153,10 +150,9 @@ class LoginContainer extends Component {
         );
 
         return (
-
             < div className="app-content content" >
                 <div className="content-wrapper">
-                    <div className="content-body">
+                    <div className="content-body margin-left-250">
                         <section className="flexbox-container">
                             <div className="col-12 d-flex align-items-center justify-content-center">
                                 <div className="col-md-4 col-10 box-shadow-2 p-0">
@@ -170,7 +166,15 @@ class LoginContainer extends Component {
                                             <div className="card-body">
                                                 {form}
                                                 {(isAuthenticated === true) ? this.redirectToTarget(from) :null}
-                                                {/* <Spinner loading={this.props.loadingStatus} /> */}
+                                                <div className="d-flex justify-content-center">
+                                                    <SyncLoader
+                                                        sizeUnit={"px"}
+                                                        size={15}
+                                                        color={'#36D7B7'}
+                                                        margin={'10px'}
+                                                        loading={this.props.loadingStatus}
+                                                    />
+                                                </div>
 
                                             </div>
                                         </div>
@@ -187,16 +191,16 @@ class LoginContainer extends Component {
 LoginContainer.propTypes = {
     loadingStatus: PropTypes.bool.isRequired,
     onChangeLoadingStatus: PropTypes.func.isRequired,
-    onLoginMember: PropTypes.func.isRequired
+    onLogin: PropTypes.func.isRequired
 }
 const mapStateToProps = (state) => ({
     loadingStatus: state.loading,
-    isAuthenticated: state.authMember.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated
 });
 
 const mapDispatchToProps = (dispatch, props) => {
     return {
-        onLoginMember: (user) => { dispatch(loginMemberRequest(user)) },
+        onLogin: (user) => { dispatch(loginRequest(user)) },
         onChangeLoadingStatus: status => { dispatch(changeLoadingStatus(status)) }
     }
 };
